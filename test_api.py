@@ -1,6 +1,7 @@
 # test_api.py
 
 import os
+from typing import cast
 
 import google.generativeai as genai
 from dotenv import load_dotenv
@@ -12,9 +13,9 @@ api_key = os.getenv("GOOGLE_API_KEY")
 print(f"API key found: {'Yes' if api_key else 'No - check your .env file'}")
 print(f"API key starts with: {api_key[:10]}...\n" if api_key else "")
 
-genai.configure(api_key=api_key)
+genai.configure(api_key=api_key)  # type: ignore
 
 print("Fetching available embedding models...\n")
-for model in genai.list_models():
+for model in genai.list_models():  # type: ignore
     if "embedContent" in model.supported_generation_methods:
         print(f"  - {model.name}")
