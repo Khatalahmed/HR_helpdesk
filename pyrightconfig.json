@@ -1,14 +1,1 @@
-{
-  "venvPath": ".",
-  "venv": "venv",
-  "include": [
-    "app",
-    "tests",
-    "test_api.py",
-    "test_models.py"
-  ],
-  "exclude": [
-    "venv",
-    ".pytest_cache"
-  ]
-}
+{\n  "venvPath": ".",\n  "venv": "venv",\n  "reportPrivateImportUsage": false,\n  "include": [\n    "app",\n    "tests",\n    "test_api.py",\n    "test_models.py"\n  ],\n  "exclude": [\n    "venv",\n    ".pytest_cache"\n  ]\n}
