@@ -1,0 +1,14 @@
+{
+  "venvPath": ".",
+  "venv": "venv",
+  "include": [
+    "app",
+    "tests",
+    "test_api.py",
+    "test_models.py"
+  ],
+  "exclude": [
+    "venv",
+    ".pytest_cache"
+  ]
+}

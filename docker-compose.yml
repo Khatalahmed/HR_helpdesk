@@ -1,0 +1,56 @@
+services:
+  pgvector-db:
+    image: pgvector/pgvector:pg16
+    container_name: snailcloud-pgvector
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: hr_helpdesk
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgvector_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d hr_helpdesk"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: snailcloud-api
+    restart: unless-stopped
+    depends_on:
+      pgvector-db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      DB_HOST: pgvector-db
+      DB_PORT: "5432"
+      DB_NAME: hr_helpdesk
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+      COLLECTION_NAME: hr_helpdesk
+      GENERATION_MODEL: gemini-2.5-flash
+      EMBEDDING_MODEL: models/gemini-embedding-001
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  pgvector_data:

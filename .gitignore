@@ -1,0 +1,33 @@
+# Python cache/artifacts
+__pycache__/
+*.py[cod]
+*.pyd
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Tool caches
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.benchmarks/
+
+# Environment/secrets
+.env
+.env.*
+!.env.example
+
+# Local logs and generated artifacts
+logs/
+chunks.pkl
+rag_evaluation_report.csv
+rag_evaluation_summary.json
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

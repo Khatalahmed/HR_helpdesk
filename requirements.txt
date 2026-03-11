@@ -1,0 +1,14 @@
+langchain
+langchain-community
+langchain-google-genai
+psycopg2-binary
+pgvector
+python-dotenv
+streamlit
+tqdm
+langchain-postgres
+google-generativeai
+langchain-google-vertexai
+fastapi
+uvicorn
+requests
