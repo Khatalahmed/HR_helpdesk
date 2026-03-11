@@ -1,7 +1,6 @@
 # test_api.py
 
 import os
-from typing import cast
 
 import google.generativeai as genai
 from dotenv import load_dotenv
