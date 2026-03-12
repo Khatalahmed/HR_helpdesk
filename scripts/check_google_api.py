@@ -1,4 +1,4 @@
-﻿"""
+"""
 Connectivity check for Google Generative AI API.
 
 Run:
@@ -8,7 +8,6 @@ Run:
 from __future__ import annotations
 
 import os
-import sys
 
 import google.generativeai as genai
 from dotenv import load_dotenv

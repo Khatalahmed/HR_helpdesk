@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import hmac
 import logging
@@ -7,7 +7,7 @@ import time
 from collections import defaultdict, deque
 from pathlib import Path
 from threading import Lock
-from typing import Protocol
+from typing import Any, Protocol
 
 from fastapi import HTTPException, Request
 
@@ -133,7 +133,8 @@ class RedisRateLimiter:
         retry_after = max(1, int(60 - (now % 60)))
         redis_key = f"{self.prefix}:{minute_bucket}:{key}"
 
-        count = int(self._client.incr(redis_key))
+        count_raw: Any = self._client.incr(redis_key)
+        count = int(count_raw)
         if count == 1:
             self._client.expire(redis_key, 61)
 

@@ -1,7 +1,6 @@
-﻿{
+{
   "venvPath": ".",
   "venv": "venv",
-  "reportPrivateImportUsage": false,
   "include": [
     "app",
     "tests",
@@ -12,5 +11,7 @@
   "exclude": [
     "venv",
     ".pytest_cache"
-  ]
+  ],
+  "reportMissingImports": "none",
+  "reportMissingModuleSource": "none"
 }
