@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import importlib
 import json
@@ -24,6 +24,8 @@ def _load_main_module(
         rate_limit_per_minute = 1000
     monkeypatch.setenv("APP_API_KEY", app_api_key)
     monkeypatch.setenv("RATE_LIMIT_PER_MINUTE", str(rate_limit_per_minute))
+    monkeypatch.setenv("RATE_LIMIT_BACKEND", "memory")
+    monkeypatch.setenv("RATE_LIMIT_STORAGE_PATH", "logs/test_rate_limit.sqlite3")
     monkeypatch.setenv("APP_ENV", app_env)
     monkeypatch.setenv("LOG_DIR", log_dir or "logs")
     monkeypatch.setenv("APP_LOG_FILE", "api.log")
@@ -174,7 +176,7 @@ def test_ask_endpoint_service_error_returns_500(
     response = client.post("/ask", json={"question": "What is salary credit date?"})
 
     assert response.status_code == 500
-    assert "RAG processing failed: simulated service failure" in response.json()["detail"]
+    assert "Internal server error. Reference request_id=" in response.json()["detail"]
 
 
 def test_retrieve_debug_endpoint_success(
@@ -243,7 +245,9 @@ def test_feedback_endpoint_writes_log(client: TestClient, tmp_path: Path, monkey
     assert feedback_log.exists()
     content = feedback_log.read_text(encoding="utf-8")
     assert "rating=4" in content
-    assert "How do I apply for leave?" in content
+    assert "question_hash=" in content
+    assert "notes_hash=" in content
+    assert "answer_hash=" in content
 
 
 def test_ask_requires_api_key_when_configured(monkeypatch: pytest.MonkeyPatch):
@@ -302,3 +306,6 @@ def test_ask_rate_limit_returns_429(monkeypatch: pytest.MonkeyPatch):
     assert response_2.status_code == 200
     assert response_3.status_code == 429
     assert response_3.json()["detail"] == "Rate limit exceeded. Try again later."
+
+
+

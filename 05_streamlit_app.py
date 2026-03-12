@@ -25,6 +25,19 @@ load_dotenv()
 API_BASE_URL_DEFAULT = os.getenv("API_BASE_URL", "http://127.0.0.1:8000").rstrip("/")
 API_KEY_DEFAULT = os.getenv("APP_API_KEY", "").strip()
 
+SAMPLE_QUESTIONS = [
+    "What is the salary credit date?",
+    "What is the mediclaim sum insured for dependents?",
+    "How does the promotion process work?",
+    "How do I raise a payroll discrepancy?",
+    "What are the DEI commitments of the company?",
+    "How are Spot Awards taxed?",
+    "What happens to health insurance when I resign?",
+    "How many annual leaves do I get per year?",
+    "What is the office working hours policy?",
+    "Are there any upskilling or training benefits?",
+]
+
 #        Image Helpers                                                                                                                                                                                        
 SCRIPT_DIR = Path(__file__).parent
 IMAGE_DIR  = SCRIPT_DIR / "images"
@@ -268,6 +281,29 @@ html, body, [class*="css"] {
     transform: translateX(2px) !important;
 }
 
+
+/*        Strong Button Contrast Override        */
+[data-testid="stButton"] button,
+[data-testid="stDownloadButton"] > button {
+    background-color: #222846 !important;
+    color: #EAF0FF !important;
+    border: 1px solid #5661A8 !important;
+    opacity: 1 !important;
+}
+
+[data-testid="stButton"] button:hover,
+[data-testid="stDownloadButton"] > button:hover {
+    background-color: #2B3360 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stButton"] button:disabled,
+[data-testid="stDownloadButton"] > button:disabled {
+    background-color: rgba(120, 185, 255, 0.35) !important;
+    color: #EAF4FF !important;
+    border: 1px solid rgba(120, 185, 255, 0.75) !important;
+    opacity: 1 !important;
+}
 /*        Source Cards        */
 .source-card {
     background: var(--bg-card); border: 1px solid var(--border);
@@ -295,6 +331,29 @@ html, body, [class*="css"] {
     font-size: 0.72rem; font-weight: 500; margin-left: 6px;
 }
 
+
+/*        Sidebar Controls: Force Blue, No White Blocks        */
+[data-testid="stSidebar"] .stButton > button,
+[data-testid="stSidebar"] [data-testid="stDownloadButton"] > button {
+    background: #23355F !important;
+    color: #EAF4FF !important;
+    border: 1px solid #5E7EBE !important;
+    opacity: 1 !important;
+}
+
+[data-testid="stSidebar"] .stButton > button:hover,
+[data-testid="stSidebar"] [data-testid="stDownloadButton"] > button:hover {
+    background: #2D4477 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stSidebar"] .stButton > button:disabled,
+[data-testid="stSidebar"] [data-testid="stDownloadButton"] > button:disabled {
+    background: #325088 !important;
+    color: #DCEBFF !important;
+    border: 1px solid #7EA7E6 !important;
+    opacity: 1 !important;
+}
 /*        Sidebar Section        */
 .sidebar-section {
     font-size: 0.72rem; font-weight: 600; text-transform: uppercase;
@@ -319,6 +378,82 @@ html, body, [class*="css"] {
     border-radius: var(--radius);
 }
 
+
+/*        Form/Input Contrast Fixes        */
+[data-testid="stTextInputRootElement"] input,
+[data-testid="stTextArea"] textarea,
+div[data-baseweb="input"] input,
+div[data-baseweb="textarea"] textarea {
+    background: var(--bg-card2) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border) !important;
+}
+
+[data-testid="stTextInputRootElement"] input::placeholder,
+[data-testid="stTextArea"] textarea::placeholder,
+div[data-baseweb="input"] input::placeholder,
+div[data-baseweb="textarea"] textarea::placeholder {
+    color: #A7ACC7 !important;
+    opacity: 1 !important;
+}
+
+/*        Chat Input Container Contrast        */
+[data-testid="stBottomBlockContainer"] {
+    background: linear-gradient(180deg, rgba(15,17,23,0.0) 0%, rgba(15,17,23,0.92) 45%, rgba(15,17,23,0.98) 100%) !important;
+}
+
+[data-testid="stChatInput"] textarea {
+    color: var(--text-primary) !important;
+    background: transparent !important;
+}
+
+
+/*        Force High Contrast For Streamlit/BaseWeb Inputs        */
+[data-testid="stTextInput"] div[data-baseweb="base-input"],
+[data-testid="stTextInput"] div[data-baseweb="input"],
+[data-testid="stNumberInput"] div[data-baseweb="base-input"],
+[data-testid="stChatInput"] div[data-baseweb="base-input"],
+[data-testid="stChatInput"] div[data-baseweb="input"],
+[data-testid="stChatInput"] > div,
+[data-testid="stChatInput"] > div > div,
+[data-testid="stChatInput"] > div > div > div,
+div[data-baseweb="textarea"] {
+    background-color: #1E2235 !important;
+    color: #EAEAF4 !important;
+    border-color: #3A3F63 !important;
+}
+
+[data-testid="stTextInput"] input,
+[data-testid="stNumberInput"] input,
+[data-testid="stChatInput"] input,
+[data-testid="stChatInput"] textarea,
+[data-testid="stTextArea"] textarea {
+    color: #EAEAF4 !important;
+    -webkit-text-fill-color: #EAEAF4 !important;
+    background-color: transparent !important;
+}
+
+[data-testid="stTextInput"] input::placeholder,
+[data-testid="stChatInput"] textarea::placeholder,
+[data-testid="stTextArea"] textarea::placeholder {
+    color: #B8BCD3 !important;
+    opacity: 1 !important;
+}
+/*        Toggle/Slider Labels Readability        */
+[data-testid="stSidebar"] label,
+[data-testid="stSidebar"] .stMarkdown,
+[data-testid="stSidebar"] .stCaption,
+[data-testid="stSidebar"] [data-testid="stWidgetLabel"] {
+    color: #DDE2F7 !important;
+}
+
+/*        Disabled Buttons Should Stay Readable        */
+.stButton > button:disabled {
+    color: #EAF4FF !important;
+    background: rgba(120, 185, 255, 0.35) !important;
+    border: 1px solid rgba(120, 185, 255, 0.75) !important;
+    opacity: 1 !important;
+}
 /*        Expander        */
 [data-testid="stExpander"] {
     background: var(--bg-card) !important; border: 1px solid var(--border) !important;
@@ -326,6 +461,96 @@ html, body, [class*="css"] {
 }
 [data-testid="stExpander"] summary { font-size: 0.88rem !important; color: var(--text-muted) !important; }
 
+
+/*        Global Anti-White Surfaces        */
+[data-testid="stApp"] button,
+[data-testid="stSidebar"] button,
+[data-testid="stApp"] [data-baseweb="input"],
+[data-testid="stApp"] [data-baseweb="base-input"],
+[data-testid="stApp"] [data-baseweb="textarea"],
+[data-testid="stSidebar"] [data-baseweb="input"],
+[data-testid="stSidebar"] [data-baseweb="base-input"],
+[data-testid="stSidebar"] [data-baseweb="textarea"] {
+    box-shadow: none !important;
+}
+
+[data-testid="stApp"] button,
+[data-testid="stSidebar"] button {
+    background-color: #23355F !important;
+    color: #EAF4FF !important;
+    border-color: #5E7EBE !important;
+}
+
+[data-testid="stApp"] button:hover,
+[data-testid="stSidebar"] button:hover {
+    background-color: #2D4477 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stApp"] button:disabled,
+[data-testid="stSidebar"] button:disabled {
+    background-color: #325088 !important;
+    color: #DCEBFF !important;
+    border-color: #7EA7E6 !important;
+    opacity: 1 !important;
+}
+
+[data-testid="stApp"] input,
+[data-testid="stApp"] textarea,
+[data-testid="stSidebar"] input,
+[data-testid="stSidebar"] textarea {
+    background-color: #1E2235 !important;
+    color: #EAEAF4 !important;
+    -webkit-text-fill-color: #EAEAF4 !important;
+}
+
+
+/*        Expander Header Button Fix        */
+[data-testid="stExpander"] summary,
+[data-testid="stExpander"] summary * {
+    background: #23355F !important;
+    color: #EAF4FF !important;
+    border-color: #5E7EBE !important;
+}
+
+[data-testid="stExpander"] button,
+[data-testid="stExpander"] button:disabled {
+    background: #23355F !important;
+    color: #EAF4FF !important;
+    border: 1px solid #5E7EBE !important;
+    opacity: 1 !important;
+}
+
+[data-testid="stExpander"] button:hover {
+    background: #2D4477 !important;
+    color: #FFFFFF !important;
+}
+/*        Expander Anti-White Override        */
+[data-testid="stExpander"] > details {
+    background: #1A1D2E !important;
+    border: 1px solid #2E3250 !important;
+    border-radius: 12px !important;
+}
+
+[data-testid="stExpander"] > details > summary {
+    background: #1E2235 !important;
+    color: #EAF4FF !important;
+    border-radius: 10px !important;
+}
+
+[data-testid="stExpander"] > details > summary:hover {
+    background: #243052 !important;
+    color: #FFFFFF !important;
+}
+
+[data-testid="stExpander"] > details > div {
+    background: #1A1D2E !important;
+    color: #EAEAF4 !important;
+}
+
+[data-testid="stExpander"] * {
+    color: #EAEAF4 !important;
+}
 /*        Responsive        */
 @media (max-width: 768px) {
     .metric-row { grid-template-columns: repeat(2, 1fr); }
@@ -497,15 +722,7 @@ with st.sidebar:
         help="FastAPI base URL. Example: http://127.0.0.1:8000",
     ).rstrip("/")
     st.session_state["api_base_url"] = api_base_url
-
-    api_key = st.text_input(
-        "Backend API Key (optional)",
-        value=st.session_state.get("api_key", API_KEY_DEFAULT),
-        type="password",
-        help="Required only if backend APP_API_KEY is enabled.",
-    )
-    st.session_state["api_key"] = api_key
-
+    st.caption("API key is loaded from server environment.")
     health = fetch_api_health(api_base_url)
     if health["ok"]:
         st.success("Backend connected")
@@ -519,52 +736,42 @@ with st.sidebar:
         value=6,
         help="Override backend retrieval top_k for this session.",
     )
-    show_sources = st.toggle("     Show Source Chunks", value=True)
-    show_scores  = st.toggle("     Show Relevance Scores", value=False)
+    show_sources = st.checkbox("Show Source Chunks", value=True)
+    show_scores  = st.checkbox("Show Relevance Scores", value=False)
 
     st.markdown('<hr style="border-color:#2E3250;">', unsafe_allow_html=True)
 
-    #        Sample Questions       
+        #        Sample Questions       
     st.markdown('<div class="sidebar-section">     Sample Questions</div>', unsafe_allow_html=True)
-    sample_qs = [
-        ("    ", "What is the salary credit date?"),
-        ("    ", "What is the mediclaim sum insured for dependents?"),
-        ("    ", "How does the promotion process work?"),
-        ("      ",  "How do I raise a payroll discrepancy?"),
-        ("    ", "What are the DEI commitments of the company?"),
-        ("    ", "How are Spot Awards taxed?"),
-        ("    ", "What happens to health insurance when I resign?"),
-        ("    ", "How many annual leaves do I get per year?"),
-        ("    ", "What is the office working hours policy?"),
-        ("    ", "Are there any upskilling or training benefits?"),
-    ]
-    for emoji, q in sample_qs:
-        if st.button(f"{emoji} {q}", key=f"sq_{q[:15]}", use_container_width=True):
+    for i, q in enumerate(SAMPLE_QUESTIONS):
+        if st.button(q, key=f"sq_{i}", use_container_width=True):
             st.session_state["prefill"] = q
+            st.rerun()
 
     st.markdown('<hr style="border-color:#2E3250;">', unsafe_allow_html=True)
 
-    #        Actions       
-    st.markdown('<div class="sidebar-section">        Actions</div>', unsafe_allow_html=True)
+        #        Actions       
+    st.markdown('<div class="sidebar-section">Actions</div>', unsafe_allow_html=True)
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("        Clear", use_container_width=True, key="clear_btn"):
-            st.session_state.messages      = []
+        if st.button("Clear Chat", use_container_width=True, key="clear_btn"):
+            st.session_state.messages = []
             st.session_state.total_queries = 0
-            st.session_state.avg_time      = []
+            st.session_state.avg_time = []
             st.rerun()
     with col2:
-        if st.button("     Export", use_container_width=True, key="export_btn"):
-            if st.session_state.messages:
-                log = "\n\n".join(
-                    f"[{m['role'].upper()}]\n{m['content']}"
-                    for m in st.session_state.messages
-                )
-                st.download_button("       Download", data=log,
-                                   file_name="hr_chat_log.txt", mime="text/plain",
-                                   key="dl_btn")
-            else:
-                st.info("No chat yet.")
+        chat_log = "\n\n".join(
+            f"[{m['role'].upper()}]\n{m['content']}"
+            for m in st.session_state.messages
+        )
+        st.download_button(
+            "Export Chat",
+            data=chat_log or "No chat yet.",
+            file_name="hr_chat_log.txt",
+            mime="text/plain",
+            key="export_btn",
+            use_container_width=True,
+        )
 
     st.markdown("""
     <div style="margin-top:1.5rem; padding:0.8rem; background:rgba(0,0,0,0.2);
@@ -688,7 +895,7 @@ st.markdown(f"""
 #                              CHAT HISTORY                                          
 #                                                                                                                                                                                                                                                 
 for msg in st.session_state.messages:
-    icon = "           " if msg["role"] == "user" else "    "
+    icon = "🙂" if msg["role"] == "user" else "🤖"
     with st.chat_message(msg["role"], avatar=icon):
         st.markdown(msg["content"])
         if msg["role"] == "assistant":
@@ -726,6 +933,15 @@ for msg in st.session_state.messages:
 
 
 #                                                                                                                                                                                                                                                 
+
+# Quick clickable questions in main panel -> prefill chat input
+st.markdown("### Quick Questions")
+quick_cols = st.columns(2)
+for i, q in enumerate(SAMPLE_QUESTIONS[:8]):
+    with quick_cols[i % 2]:
+        if st.button(q, key=f"main_sq_{i}", use_container_width=True):
+            st.session_state["prefill"] = q
+            st.rerun()
 #                              CHAT INPUT                                            
 #                                                                                                                                                                                                                                                 
 prefill  = st.session_state.pop("prefill", "")
@@ -733,10 +949,10 @@ question = st.chat_input("      Ask an HR policy question    ") or prefill
 
 if question:
     st.session_state.messages.append({"role": "user", "content": question})
-    with st.chat_message("user", avatar="           "):
+    with st.chat_message("user", avatar="🙂"):
         st.markdown(question)
 
-    with st.chat_message("assistant", avatar="    "):
+    with st.chat_message("assistant", avatar="🤖"):
         status = st.status("     Calling backend API    ", expanded=False)
         try:
             with status:
@@ -829,3 +1045,26 @@ if not st.session_state.messages:
         </div>
     </div>
     """, unsafe_allow_html=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

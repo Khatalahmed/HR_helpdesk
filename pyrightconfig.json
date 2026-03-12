@@ -1,12 +1,13 @@
-{
+﻿{
   "venvPath": ".",
   "venv": "venv",
   "reportPrivateImportUsage": false,
   "include": [
     "app",
     "tests",
-    "test_api.py",
-    "test_models.py"
+    "scripts/check_quality_gate.py",
+    "scripts/check_google_api.py",
+    "scripts/check_google_models.py"
   ],
   "exclude": [
     "venv",

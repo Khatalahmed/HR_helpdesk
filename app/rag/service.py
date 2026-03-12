@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import time
 from dataclasses import dataclass
@@ -147,15 +147,12 @@ class RAGService:
         heading_overlap = lexical_overlap_ratio(question_tokens, heading)
         overlap_signal = content_overlap + heading_overlap
 
-        # Drop metadata-like chunks where body is effectively just the title.
         if normalized_heading and word_count <= 14 and normalized_text == normalized_heading:
             return True
 
-        # Drop very short chunks with weak lexical evidence for the user question.
         if word_count < 18 and overlap_signal < 0.18:
             return True
 
-        # Drop generic sections unless they have strong overlap with the query.
         if is_low_signal_heading(heading) and word_count < 80 and content_overlap < 0.12:
             return True
 
@@ -341,6 +338,14 @@ class RAGService:
         )[:effective_top_k]
 
         return selected_pairs, None
+
+    def retrieve_pairs(self, question: str, top_k_override: int | None = None) -> tuple[list[DocScorePair], str | None]:
+        return self._retrieve_pairs(question=question, top_k_override=top_k_override)
+
+    def retrieve_contexts(self, question: str, top_k_override: int | None = None) -> tuple[list[str], str | None]:
+        pairs, route_name = self._retrieve_pairs(question=question, top_k_override=top_k_override)
+        contexts = [doc.page_content.strip() for doc, _ in pairs if doc.page_content.strip()]
+        return contexts, route_name
 
     @staticmethod
     def _to_source_item(index: int, doc: Any, score: float) -> dict[str, Any]:

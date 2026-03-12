@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 import os
 from dataclasses import dataclass
@@ -22,6 +22,10 @@ class Settings:
     embedding_model: str = "models/gemini-embedding-001"
     app_api_key: str = ""
     rate_limit_per_minute: int = 60
+    rate_limit_backend: str = "memory"
+    rate_limit_storage_path: str = "logs/rate_limit.sqlite3"
+    rate_limit_redis_url: str = "redis://localhost:6379/0"
+    rate_limit_redis_prefix: str = "snailcloud:ratelimit"
     app_env: str = "development"
     log_level: str = "INFO"
     log_dir: str = "logs"
@@ -62,6 +66,13 @@ def get_settings() -> Settings:
         embedding_model=os.getenv("EMBEDDING_MODEL", "models/gemini-embedding-001"),
         app_api_key=os.getenv("APP_API_KEY", "").strip(),
         rate_limit_per_minute=max(1, int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))),
+        rate_limit_backend=os.getenv("RATE_LIMIT_BACKEND", "memory").strip().lower() or "memory",
+        rate_limit_storage_path=os.getenv("RATE_LIMIT_STORAGE_PATH", "logs/rate_limit.sqlite3").strip()
+        or "logs/rate_limit.sqlite3",
+        rate_limit_redis_url=os.getenv("RATE_LIMIT_REDIS_URL", "redis://localhost:6379/0").strip()
+        or "redis://localhost:6379/0",
+        rate_limit_redis_prefix=os.getenv("RATE_LIMIT_REDIS_PREFIX", "snailcloud:ratelimit").strip()
+        or "snailcloud:ratelimit",
         app_env=os.getenv("APP_ENV", "development").strip() or "development",
         log_level=os.getenv("LOG_LEVEL", "INFO").strip().upper() or "INFO",
         log_dir=os.getenv("LOG_DIR", "logs").strip() or "logs",

@@ -1,4 +1,4 @@
-# FastAPI Beginner Guide
+﻿# FastAPI Beginner Guide
 
 This guide helps you run the backend API for your HR Helpdesk project.
 
@@ -107,8 +107,8 @@ curl -X POST "http://127.0.0.1:8000/ask" `
 ## 8) Run production checks locally (before push)
 
 ```powershell
-venv\Scripts\python.exe -m ruff check app tests test_api.py test_models.py scripts\check_quality_gate.py
-venv\Scripts\python.exe -m mypy app tests test_api.py test_models.py scripts\check_quality_gate.py --ignore-missing-imports --follow-imports=skip
+venv\\Scripts\\python.exe -m ruff check app tests scripts\\check_quality_gate.py scripts\\check_google_api.py scripts\\check_google_models.py
+venv\\Scripts\\python.exe -m mypy app tests scripts\\check_quality_gate.py scripts\\check_google_api.py scripts\\check_google_models.py --ignore-missing-imports --follow-imports=skip
 venv\Scripts\python.exe -m pyright -p .
 venv\Scripts\python.exe -m pytest tests -q
 venv\Scripts\python.exe scripts\check_quality_gate.py --summary rag_evaluation_summary.json
@@ -121,3 +121,4 @@ These are the same checks now configured in GitHub Actions CI.
 For production-style local deployment, follow:
 
 - `docs/DOCKER_DEPLOYMENT_BEGINNER.md`
+

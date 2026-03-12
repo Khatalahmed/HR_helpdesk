@@ -1,7 +1,9 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
+import hashlib
 import json
 import logging
+import re
 import time
 import uuid
 from datetime import datetime, timezone
@@ -21,15 +23,16 @@ from app.schemas import (
     RetrieveDebugRequest,
     RetrieveDebugResponse,
 )
-from app.security import InMemoryRateLimiter, enforce_api_key, enforce_rate_limit
+from app.security import build_rate_limiter, enforce_api_key, enforce_rate_limit
 
 
 settings = get_settings()
 setup_logging(settings)
 rag_service = RAGService(settings=settings)
-rate_limiter = InMemoryRateLimiter(settings.rate_limit_per_minute)
+rate_limiter = build_rate_limiter(settings)
 http_logger = logging.getLogger("snailcloud.http")
 http_logger.setLevel(logging.INFO)
+app_logger = logging.getLogger("snailcloud.app")
 
 app = FastAPI(
     title="SnailCloud HR Helpdesk API",
@@ -46,6 +49,11 @@ api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 def _protect(request: Request, provided_api_key: str | None) -> None:
     enforce_api_key(provided_api_key, settings)
     enforce_rate_limit(request, rate_limiter, provided_api_key)
+
+
+def _hash_text(value: str) -> str:
+    normalized = re.sub(r"\s+", " ", (value or "").strip()).lower()
+    return hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:16]
 
 
 def _log_http_request(
@@ -127,7 +135,12 @@ def ask(
             top_k_override=payload.top_k,
         )
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"RAG processing failed: {exc}") from exc
+        request_id = getattr(request.state, "request_id", "unknown")
+        app_logger.exception("ask_failed request_id=%s path=%s", request_id, request.url.path)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error. Reference request_id={request_id}.",
+        ) from exc
 
     return AskResponse(**result)
 
@@ -146,7 +159,12 @@ def retrieve_debug(
     try:
         result = rag_service.retrieve_debug(question=question, top_k_override=payload.top_k)
     except Exception as exc:
-        raise HTTPException(status_code=500, detail=f"Retrieval failed: {exc}") from exc
+        request_id = getattr(request.state, "request_id", "unknown")
+        app_logger.exception("retrieve_debug_failed request_id=%s path=%s", request_id, request.url.path)
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error. Reference request_id={request_id}.",
+        ) from exc
 
     return RetrieveDebugResponse(route=result["route"], sources=result["sources"])
 
@@ -157,10 +175,7 @@ def feedback(
     request: Request,
     api_key: str | None = Security(api_key_header),
 ) -> dict:
-    """
-    Beginner-friendly feedback sink.
-    In production, move this to a DB table or logging service.
-    """
+    """Persist only non-PII feedback metadata for privacy and auditability."""
     _protect(request, api_key)
     log_dir = Path("logs")
     log_dir.mkdir(parents=True, exist_ok=True)
@@ -169,7 +184,9 @@ def feedback(
     timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
     line = (
         f"{timestamp} | rating={payload.rating} | "
-        f"question={payload.question!r} | notes={payload.notes!r}\n"
+        f"question_hash={_hash_text(payload.question)} | question_len={len(payload.question)} | "
+        f"answer_hash={_hash_text(payload.answer)} | answer_len={len(payload.answer)} | "
+        f"notes_hash={_hash_text(payload.notes)} | notes_len={len(payload.notes)}\n"
     )
     with open(feedback_file, "a", encoding="utf-8") as file:
         file.write(line)
