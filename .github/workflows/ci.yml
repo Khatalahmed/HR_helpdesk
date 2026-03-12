@@ -1,4 +1,4 @@
-name: CI
+﻿name: CI
 
 on:
   push:
@@ -26,10 +26,10 @@ jobs:
           pip install pytest ruff mypy "pyright[nodejs]"
 
       - name: Ruff
-        run: python -m ruff check app tests test_api.py test_models.py
+        run: python -m ruff check app tests scripts/check_google_api.py scripts/check_google_models.py scripts/check_quality_gate.py
 
       - name: Mypy
-        run: python -m mypy app tests test_api.py test_models.py --ignore-missing-imports --follow-imports=skip
+        run: python -m mypy app tests scripts/check_google_api.py scripts/check_google_models.py scripts/check_quality_gate.py --ignore-missing-imports --follow-imports=skip
 
       - name: Pyright
         run: python -m pyright -p .
@@ -46,3 +46,4 @@ jobs:
             --answer-relevancy 0.70 \
             --context-precision 0.70 \
             --context-recall 0.85
+
